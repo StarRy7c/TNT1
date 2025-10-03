@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Speed Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .typing-text {
+            font-family: 'Fira Code', monospace;
+            letter-spacing: 1px;
+        }
+        .caret {
+            animation: blink 1s infinite;
+            display: inline-block;
+            width: 2px;
+            background-color: #3b82f6; /* blue-500 */
+            margin-left: -2px;
+            border-radius: 2px;
+            position: relative;
+            top: 4px; /* Adjust vertical alignment */
+            height: 1.5rem; /* Match line height */
+        }
+
+        .caret.error {
+            background-color: #ef4444; /* red-500 */
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        .character.correct {
+            color: #22c55e; /* green-500 */
+        }
+        .character.incorrect {
+            color: #ef4444; /* red-500 */
+            text-decoration: underline;
+            text-decoration-color: #ef4444;
+        }
+        
+        /* Hide the actual input field */
+        #hidden-input {
+            position: absolute;
+            left: -9999px;
+            top: -9999px;
+            opacity: 0;
+            width: 1px;
+            height: 1px;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 flex items-center justify-center min-h-screen p-4 transition-colors duration-300">
+
+    <div class="w-full max-w-4xl mx-auto">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-blue-500">Typing Speed Test</h1>
+            <p class="text-gray-500 dark:text-gray-400 mt-2">How fast can you type? Test your skills!</p>
+        </header>
+
+        <main id="test-container" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-2xl shadow-lg transition-colors duration-300">
+            <!-- Stats Display -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-center">
+                <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Time</p>
+                    <p id="timer" class="text-3xl font-semibold text-blue-500">60</p>
+                </div>
+                <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">WPM</p>
+                    <p id="wpm" class="text-3xl font-semibold">0</p>
+                </div>
+                <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">CPM</p>
+                    <p id="cpm" class="text-3xl font-semibold">0</p>
+                </div>
+                <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg">
+                    <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">Accuracy</p>
+                    <p id="accuracy" class="text-3xl font-semibold">100%</p>
+                </div>
+            </div>
+
+            <!-- Text to Type -->
+            <div id="text-display-container" class="typing-text text-xl md:text-2xl leading-relaxed bg-gray-50 dark:bg-gray-900/50 p-6 rounded-lg select-none cursor-text" tabindex="0">
+                <p id="text-display">Click here or start typing to begin the test...</p>
+            </div>
+            
+            <!-- Hidden input for capturing keyboard events -->
+            <input type="text" id="hidden-input" autofocus>
+
+            <!-- Restart Button -->
+            <div class="mt-6 text-center">
+                <button id="restart-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800">
+                    <svg class="inline-block w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h5M20 20v-5h-5M4 4l1.5 1.5A9 9 0 0120.5 15"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 20l-1.5-1.5A9 9 0 003.5 9"></path></svg>
+                    Restart Test
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM Elements
+            const textDisplayContainer = document.getElementById('text-display-container');
+            const textDisplay = document.getElementById('text-display');
+            const hiddenInput = document.getElementById('hidden-input');
+            const timerEl = document.getElementById('timer');
+            const wpmEl = document.getElementById('wpm');
+            const cpmEl = document.getElementById('cpm');
+            const accuracyEl = document.getElementById('accuracy');
+            const restartBtn = document.getElementById('restart-btn');
+
+            // Test parameters
+            const TEST_DURATION = 60;
+            const TEXTS = [
+                "The quick brown fox jumps over the lazy dog. This sentence contains every letter of the alphabet. Pack my box with five dozen liquor jugs.",
+                "Technology has revolutionized the way we live and work. From smartphones to artificial intelligence, advancements continue to shape our daily lives.",
+                "To be yourself in a world that is constantly trying to make you something else is the greatest accomplishment. The only way to do great work is to love what you do.",
+                "The sun dipped below the horizon, painting the sky in shades of orange and pink. A gentle breeze rustled the leaves of the trees, creating a soothing melody.",
+                "Programming is the process of creating a set of instructions that tell a computer how to perform a task. It requires logic, problem-solving skills, and attention to detail.",
+                "Never underestimate the power of a good book. It can transport you to different worlds, introduce you to fascinating characters, and teach you valuable lessons about life.",
+                "The ocean is a vast and mysterious place, full of wonders yet to be discovered. Its depths hold secrets that have intrigued scientists and explorers for centuries.",
+                "Success is not final, failure is not fatal: it is the courage to continue that counts. Believe you can and you're halfway there. The future belongs to those who believe in the beauty of their dreams."
+            ];
+
+            // State variables
+            let timer;
+            let timeLeft = TEST_DURATION;
+            let isTestActive = false;
+            let currentIndex = 0;
+            let typedCharsCount = 0;
+            let correctCharsCount = 0;
+
+            function initializeTest() {
+                // Reset state
+                clearInterval(timer);
+                isTestActive = false;
+                timeLeft = TEST_DURATION;
+                currentIndex = 0;
+                typedCharsCount = 0;
+                correctCharsCount = 0;
+
+                // Reset UI
+                timerEl.textContent = timeLeft;
+                wpmEl.textContent = '0';
+                cpmEl.textContent = '0';
+                accuracyEl.textContent = '100%';
+                textDisplayContainer.classList.remove('opacity-50');
+
+                // Load new text
+                const randomText = TEXTS[Math.floor(Math.random() * TEXTS.length)];
+                textDisplay.innerHTML = ''; // Clear previous text
+                randomText.split('').forEach(char => {
+                    const charSpan = document.createElement('span');
+                    charSpan.textContent = char;
+                    charSpan.className = 'character';
+                    textDisplay.appendChild(charSpan);
+                });
+                
+                // Add initial caret
+                addCaret();
+                
+                // Focus the hidden input to capture typing
+                hiddenInput.focus();
+            }
+
+            function addCaret() {
+                removeCaret(); // Ensure no multiple carets
+                if (currentIndex < textDisplay.children.length) {
+                    const caretSpan = document.createElement('span');
+                    caretSpan.className = 'caret';
+                    const currentCharacter = textDisplay.children[currentIndex];
+                    currentCharacter.parentNode.insertBefore(caretSpan, currentCharacter);
+                } else {
+                    // Caret at the end
+                    const caretSpan = document.createElement('span');
+                    caretSpan.className = 'caret';
+                    textDisplay.appendChild(caretSpan);
+                }
+            }
+
+            function removeCaret() {
+                const existingCaret = textDisplay.querySelector('.caret');
+                if (existingCaret) {
+                    existingCaret.remove();
+                }
+            }
+            
+            function handleInput(event) {
+                // For mobile or paste events, use the input value
+                const typedValue = hiddenInput.value;
+                if (!typedValue) return;
+
+                const characters = textDisplay.children;
+                const typedChar = typedValue.slice(-1); // Get the last character typed
+                
+                // Start the timer on the first character typed
+                if (!isTestActive && currentIndex < characters.length -1) {
+                    startTimer();
+                }
+
+                if (currentIndex >= characters.length - 1) {
+                    return; // Test finished
+                }
+                
+                const expectedCharSpan = characters[currentIndex];
+                const expectedChar = expectedCharSpan.textContent;
+
+                typedCharsCount++;
+
+                if (typedChar === expectedChar) {
+                    expectedCharSpan.classList.add('correct');
+                    correctCharsCount++;
+                } else {
+                    expectedCharSpan.classList.add('incorrect');
+                }
+                
+                currentIndex++;
+                updateMetrics();
+                
+                if(currentIndex === characters.length-1){
+                    endTest();
+                } else {
+                    addCaret(); // Move caret
+                }
+                
+                // Clear the input to only handle one character at a time
+                hiddenInput.value = '';
+            }
+            
+            function handleKeyDown(event) {
+                 // Prevent default for keys that might move the page (space, backspace, etc.)
+                if (event.key === ' ' || event.key === 'Backspace') {
+                    event.preventDefault();
+                }
+                
+                // Ignore special keys
+                if (event.key.length > 1 && event.key !== 'Backspace') {
+                    return;
+                }
+
+                const characters = textDisplay.children;
+                 
+                // Handle backspace
+                if (event.key === 'Backspace') {
+                    if(currentIndex > 0){
+                        currentIndex--;
+                        const charToReset = characters[currentIndex];
+                        
+                        // Recalculate stats if the character was typed
+                        if (charToReset.classList.contains('correct') || charToReset.classList.contains('incorrect')) {
+                             typedCharsCount--;
+                            if (charToReset.classList.contains('correct')) {
+                                correctCharsCount--;
+                            }
+                        }
+                        
+                        charToReset.classList.remove('correct', 'incorrect');
+                        addCaret();
+                        updateMetrics();
+                    }
+                    return;
+                }
+
+                // Normal character typing
+                if (!isTestActive && currentIndex < characters.length - 1) {
+                    startTimer();
+                }
+
+                if (currentIndex >= characters.length-1) return;
+
+                const expectedCharSpan = characters[currentIndex];
+                const expectedChar = expectedCharSpan.textContent;
+                
+                typedCharsCount++;
+                if (event.key === expectedChar) {
+                    expectedCharSpan.classList.add('correct');
+                    correctCharsCount++;
+                } else {
+                    expectedCharSpan.classList.add('incorrect');
+                }
+
+                currentIndex++;
+
+                if (currentIndex === characters.length-1) {
+                    endTest();
+                } else {
+                    addCaret();
+                }
+                updateMetrics();
+            }
+
+            function startTimer() {
+                isTestActive = true;
+                timer = setInterval(() => {
+                    timeLeft--;
+                    timerEl.textContent = timeLeft;
+                    updateMetrics();
+                    if (timeLeft <= 0) {
+                        endTest();
+                    }
+                }, 1000);
+            }
+            
+            function endTest() {
+                clearInterval(timer);
+                isTestActive = false;
+                textDisplayContainer.classList.add('opacity-50');
+                removeCaret();
+                // Final calculation to be sure
+                updateMetrics(true); 
+            }
+
+            function updateMetrics(isFinal = false) {
+                 if (!isTestActive && !isFinal) return;
+
+                const elapsedTime = TEST_DURATION - timeLeft;
+                const elapsedTimeInMinutes = elapsedTime / 60;
+
+                // WPM (Words Per Minute) - A "word" is standardized to 5 characters
+                const wpm = elapsedTimeInMinutes > 0 ? Math.round((correctCharsCount / 5) / elapsedTimeInMinutes) : 0;
+                
+                // CPM (Characters Per Minute)
+                const cpm = elapsedTimeInMinutes > 0 ? Math.round(correctCharsCount / elapsedTimeInMinutes) : 0;
+
+                // Accuracy
+                const accuracy = typedCharsCount > 0 ? Math.round((correctCharsCount / typedCharsCount) * 100) : 100;
+
+                wpmEl.textContent = wpm;
+                cpmEl.textContent = cpm;
+                accuracyEl.textContent = `${accuracy}%`;
+            }
+
+            // Event Listeners
+            restartBtn.addEventListener('click', initializeTest);
+            textDisplayContainer.addEventListener('click', () => hiddenInput.focus());
+
+            // Use keydown for better control over backspace and special keys
+            hiddenInput.addEventListener('keydown', handleKeyDown);
+
+            // Fallback for mobile devices where keydown might not capture everything
+            hiddenInput.addEventListener('input', handleInput);
+
+
+            // Initial load
+            initializeTest();
+        });
+    </script>
+</body>
+</html>
