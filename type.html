@@ -27,7 +27,6 @@
             top: 4px; /* Adjust vertical alignment */
             height: 1.5rem; /* Match line height */
         }
-
         .caret.error {
             background-color: #ef4444; /* red-500 */
         }
@@ -36,7 +35,6 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0; }
         }
-
         .character.correct {
             color: #22c55e; /* green-500 */
         }
@@ -137,9 +135,9 @@
             let currentIndex = 0;
             let typedCharsCount = 0;
             let correctCharsCount = 0;
+            let characterSpans = [];
 
             function initializeTest() {
-                // Reset state
                 clearInterval(timer);
                 isTestActive = false;
                 timeLeft = TEST_DURATION;
@@ -147,16 +145,15 @@
                 typedCharsCount = 0;
                 correctCharsCount = 0;
 
-                // Reset UI
                 timerEl.textContent = timeLeft;
                 wpmEl.textContent = '0';
                 cpmEl.textContent = '0';
                 accuracyEl.textContent = '100%';
                 textDisplayContainer.classList.remove('opacity-50');
+                hiddenInput.value = '';
 
-                // Load new text
                 const randomText = TEXTS[Math.floor(Math.random() * TEXTS.length)];
-                textDisplay.innerHTML = ''; // Clear previous text
+                textDisplay.innerHTML = '';
                 randomText.split('').forEach(char => {
                     const charSpan = document.createElement('span');
                     charSpan.textContent = char;
@@ -164,22 +161,19 @@
                     textDisplay.appendChild(charSpan);
                 });
                 
-                // Add initial caret
+                characterSpans = Array.from(textDisplay.querySelectorAll('.character'));
                 addCaret();
-                
-                // Focus the hidden input to capture typing
                 hiddenInput.focus();
             }
 
             function addCaret() {
-                removeCaret(); // Ensure no multiple carets
-                if (currentIndex < textDisplay.children.length) {
+                removeCaret();
+                if (currentIndex < characterSpans.length) {
                     const caretSpan = document.createElement('span');
                     caretSpan.className = 'caret';
-                    const currentCharacter = textDisplay.children[currentIndex];
+                    const currentCharacter = characterSpans[currentIndex];
                     currentCharacter.parentNode.insertBefore(caretSpan, currentCharacter);
                 } else {
-                    // Caret at the end
                     const caretSpan = document.createElement('span');
                     caretSpan.className = 'caret';
                     textDisplay.appendChild(caretSpan);
@@ -193,24 +187,21 @@
                 }
             }
             
-            function handleInput(event) {
-                // For mobile or paste events, use the input value
+            function handleInput() {
                 const typedValue = hiddenInput.value;
-                if (!typedValue) return;
+                if (!typedValue || !isTestActive && timeLeft <= 0) return;
 
-                const characters = textDisplay.children;
-                const typedChar = typedValue.slice(-1); // Get the last character typed
-                
-                // Start the timer on the first character typed
-                if (!isTestActive && currentIndex < characters.length -1) {
+                const typedChar = typedValue.slice(-1);
+
+                if (!isTestActive) {
                     startTimer();
                 }
 
-                if (currentIndex >= characters.length - 1) {
-                    return; // Test finished
+                if (currentIndex >= characterSpans.length) {
+                    return; 
                 }
                 
-                const expectedCharSpan = characters[currentIndex];
+                const expectedCharSpan = characterSpans[currentIndex];
                 const expectedChar = expectedCharSpan.textContent;
 
                 typedCharsCount++;
@@ -225,38 +216,27 @@
                 currentIndex++;
                 updateMetrics();
                 
-                if(currentIndex === characters.length-1){
+                if (currentIndex === characterSpans.length) {
                     endTest();
                 } else {
-                    addCaret(); // Move caret
+                    addCaret();
                 }
                 
-                // Clear the input to only handle one character at a time
                 hiddenInput.value = '';
             }
             
             function handleKeyDown(event) {
-                 // Prevent default for keys that might move the page (space, backspace, etc.)
                 if (event.key === ' ' || event.key === 'Backspace') {
                     event.preventDefault();
                 }
                 
-                // Ignore special keys
-                if (event.key.length > 1 && event.key !== 'Backspace') {
-                    return;
-                }
-
-                const characters = textDisplay.children;
-                 
-                // Handle backspace
                 if (event.key === 'Backspace') {
-                    if(currentIndex > 0){
+                    if (currentIndex > 0) {
                         currentIndex--;
-                        const charToReset = characters[currentIndex];
+                        const charToReset = characterSpans[currentIndex];
                         
-                        // Recalculate stats if the character was typed
                         if (charToReset.classList.contains('correct') || charToReset.classList.contains('incorrect')) {
-                             typedCharsCount--;
+                            typedCharsCount--;
                             if (charToReset.classList.contains('correct')) {
                                 correctCharsCount--;
                             }
@@ -266,35 +246,7 @@
                         addCaret();
                         updateMetrics();
                     }
-                    return;
                 }
-
-                // Normal character typing
-                if (!isTestActive && currentIndex < characters.length - 1) {
-                    startTimer();
-                }
-
-                if (currentIndex >= characters.length-1) return;
-
-                const expectedCharSpan = characters[currentIndex];
-                const expectedChar = expectedCharSpan.textContent;
-                
-                typedCharsCount++;
-                if (event.key === expectedChar) {
-                    expectedCharSpan.classList.add('correct');
-                    correctCharsCount++;
-                } else {
-                    expectedCharSpan.classList.add('incorrect');
-                }
-
-                currentIndex++;
-
-                if (currentIndex === characters.length-1) {
-                    endTest();
-                } else {
-                    addCaret();
-                }
-                updateMetrics();
             }
 
             function startTimer() {
@@ -312,25 +264,22 @@
             function endTest() {
                 clearInterval(timer);
                 isTestActive = false;
+                hiddenInput.blur();
                 textDisplayContainer.classList.add('opacity-50');
                 removeCaret();
-                // Final calculation to be sure
                 updateMetrics(true); 
             }
 
             function updateMetrics(isFinal = false) {
-                 if (!isTestActive && !isFinal) return;
+                if (!isTestActive && !isFinal) return;
 
                 const elapsedTime = TEST_DURATION - timeLeft;
+                if (elapsedTime === 0) return;
+
                 const elapsedTimeInMinutes = elapsedTime / 60;
 
-                // WPM (Words Per Minute) - A "word" is standardized to 5 characters
-                const wpm = elapsedTimeInMinutes > 0 ? Math.round((correctCharsCount / 5) / elapsedTimeInMinutes) : 0;
-                
-                // CPM (Characters Per Minute)
-                const cpm = elapsedTimeInMinutes > 0 ? Math.round(correctCharsCount / elapsedTimeInMinutes) : 0;
-
-                // Accuracy
+                const wpm = Math.round((correctCharsCount / 5) / elapsedTimeInMinutes);
+                const cpm = Math.round(correctCharsCount / elapsedTimeInMinutes);
                 const accuracy = typedCharsCount > 0 ? Math.round((correctCharsCount / typedCharsCount) * 100) : 100;
 
                 wpmEl.textContent = wpm;
@@ -338,18 +287,11 @@
                 accuracyEl.textContent = `${accuracy}%`;
             }
 
-            // Event Listeners
             restartBtn.addEventListener('click', initializeTest);
             textDisplayContainer.addEventListener('click', () => hiddenInput.focus());
-
-            // Use keydown for better control over backspace and special keys
             hiddenInput.addEventListener('keydown', handleKeyDown);
-
-            // Fallback for mobile devices where keydown might not capture everything
             hiddenInput.addEventListener('input', handleInput);
 
-
-            // Initial load
             initializeTest();
         });
     </script>
