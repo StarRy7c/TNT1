@@ -1,52 +1,96 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Channel Data Viewer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-    </style>
-</head>
-<body class="bg-gray-900 text-white">
-    <div class="container mx-auto p-4 md:p-8">
-        <div class="bg-gray-800 rounded-lg shadow-xl p-6">
-            <h1 class="text-2xl font-bold mb-4 border-b border-gray-700 pb-2">JioTV Channel Data</h1>
-            <p id="status" class="text-yellow-400 mb-4">Fetching data from https://cric.hypetg.fun/jiotv.json...</p>
-            <div class="bg-gray-900 rounded-md p-4 max-h-[70vh] overflow-auto">
-                <pre id="jsonData" class="text-sm whitespace-pre-wrap break-all"></pre>
-            </div>
-        </div>
-    </div>
+<script>
+    (function(){
+  var _0x1a2b=["\x68\x6F\x73\x74\x6E\x61\x6D\x65","\x6C\x6F\x63\x61\x74\x69\x6F\x6E","\x69\x6E\x63\x6C\x75\x64\x65\x73","\x73\x74\x61\x72\x72\x79\x37\x63","\x68\x72\x65\x66","\x68\x74\x74\x70\x73\x3A\x2F\x2F\x74\x2E\x6D\x65\x2F\x2B\x52\x54\x5F\x58\x57\x46\x5A\x43\x53\x45\x35\x6B\x4E\x57\x55\x31"];
+  if(!window[_0x1a2b[1]][_0x1a2b[0]][_0x1a2b[2]](_0x1a2b[3]))window[_0x1a2b[1]][_0x1a2b[4]]=_0x1a2b[5];
+})();
+(function(){
+  const _0x4f8e=['\x61\x64\x64\x45\x76\x65\x6E\x74\x4C\x69\x73\x74\x65\x6E\x65\x72','\x63\x6F\x6E\x74\x65\x78\x74\x6D\x65\x6E\x75','\x70\x72\x65\x76\x65\x6E\x74\x44\x65\x66\x61\x75\x6C\x74','\x6B\x65\x79\x64\x6F\x77\x6E','\x6B\x65\x79\x43\x6F\x64\x65','\x63\x74\x72\x6C\x4B\x65\x79','\x73\x68\x69\x66\x74\x4B\x65\x79','\x6F\x75\x74\x65\x72\x57\x69\x64\x74\x68','\x69\x6E\x6E\x65\x72\x57\x69\x64\x74\x68','\x6F\x75\x74\x65\x72\x48\x65\x69\x67\x68\x74','\x69\x6E\x6E\x65\x72\x48\x65\x69\x67\x68\x74','\x62\x6F\x64\x79','\x69\x6E\x6E\x65\x72\x48\x54\x4D\x4C','\x70\x6F\x73\x69\x74\x69\x6F\x6E\x3A\x66\x69\x78\x65\x64\x3B\x20\x74\x6F\x70\x3A\x30\x3B\x20\x6C\x65\x66\x74\x3A\x30\x3B\x20\x77\x69\x64\x74\x68\x3A\x31\x30\x30\x25\x3B\x20\x68\x65\x69\x67\x68\x74\x3A\x31\x30\x30\x25\x3B\x20\x62\x61\x63\x6B\x67\x72\x6F\x75\x6E\x64\x3A\x23\x30\x30\x30\x3B\x20\x63\x6F\x6C\x6F\x72\x3A\x77\x68\x69\x74\x65\x3B\x20\x64\x69\x73\x70\x6C\x61\x79\x3A\x66\x6C\x65\x78\x3B\x20\x6A\x75\x73\x74\x69\x66\x79\x2D\x63\x6F\x6E\x74\x65\x6E\x74\x3A\x63\x65\x6E\x74\x65\x72\x3B\x20\x61\x6C\x69\x67\x6E\x2D\x69\x74\x65\x6D\x73\x3A\x63\x65\x6E\x74\x65\x72\x3B\x20\x66\x6F\x6E\x74\x2D\x66\x61\x6D\x69\x6C\x79\x3A\x20\x73\x61\x6E\x73\x2D\x73\x65\x72\x69\x66\x3B\x20\x66\x6F\x6E\x74\x2D\x73\x69\x7A\x65\x3A\x20\x32\x34\x70\x78\x3B','\x44\x65\x76\x65\x6C\x6F\x70\x65\x72\x20\x54\x6F\x6F\x6C\x73\x20\x61\x72\x65\x20\x6E\x6F\x74\x20\x61\x6C\x6C\x6F\x77\x65\x64\x2E','\x73\x65\x74\x49\x6E\x74\x65\x72\x76\x61\x6C','\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64','\x74\x65\x6C\x65\x67\x72\x61\x6D\x50\x6F\x70\x75\x70','\x73\x74\x79\x6C\x65','\x64\x69\x73\x70\x6C\x61\x79','\x66\x6C\x65\x78','\x6E\x6F\x6E\x65','\x63\x6C\x69\x63\x6B','\x74\x61\x72\x67\x65\x74','\x6C\x6F\x63\x61\x74\x69\x6F\x6E','\x68\x72\x65\x66','\x77\x68\x61\x74\x73\x61\x70\x70\x53\x68\x61\x72\x65','\x74\x65\x6C\x65\x67\x72\x61\x6D\x53\x68\x61\x72\x65','\x75\x72\x6C','\x48\x65\x79\x21\x20\x43\x68\x65\x63\x6B\x20\x6F\x75\x74\x20\x74\x68\x69\x73\x20\x61\x77\x65\x73\x6F\x6D\x65\x20\x6C\x69\x76\x65\x20\x73\x74\x72\x65\x61\x6D\x20\x49\x20\x66\x6F\x75\x6E\x64\x3A','\x65\x6E\x63\x6F\x64\x65\x55\x52\x49\x43\x6F\x6D\x70\x6F\x6E\x65\x6E\x74','\x68\x72\x65\x66','\x77\x68\x61\x74\x73\x61\x70\x70\x53\x68\x61\x72\x65','\x74\x65\x6C\x65\x67\x72\x61\x6D\x53\x68\x61\x72\x65','\x67\x65\x74\x50\x6C\x61\x79\x65\x72','\x75\x69','\x67\x65\x74\x43\x6F\x6E\x74\x72\x6F\x6C\x73','\x63\x6F\x6E\x66\x69\x67\x75\x72\x65','\x63\x6F\x6E\x74\x72\x6F\x6C\x50\x61\x6E\x65\x6C\x45\x6C\x65\x6D\x65\x6E\x74\x73','\x70\x6C\x61\x79\x5F\x70\x61\x75\x73\x65','\x6D\x75\x74\x65','\x76\x6F\x6C\x75\x6D\x65','\x73\x70\x61\x63\x65\x72','\x74\x69\x6D\x65\x5F\x61\x6E\x64\x5F\x64\x75\x72\x61\x74\x69\x6F\x6E','\x70\x69\x63\x74\x75\x72\x65\x5F\x69\x6E\x5F\x70\x69\x63\x74\x75\x72\x65','\x66\x75\x6C\x6C\x73\x63\x72\x65\x65\x6E','\x6F\x76\x65\x72\x66\x6C\x6F\x77\x5F\x6D\x65\x6E\x75','\x65\x72\x72\x6F\x72','\x63\x6F\x6E\x73\x6F\x6C\x65','\x6C\x6F\x67','\x50\x6C\x61\x79\x65\x72\x20\x45\x72\x72\x6F\x72','\x73\x68\x61\x6B\x61\x2D\x75\x69\x2D\x6C\x6F\x61\x64\x65\x64'];
+  document[_0x4f8e[0]](_0x4f8e[1],e=>e[_0x4f8e[2]]());
+  document[_0x4f8e[0]](_0x4f8e[3],function(e){
+    if(e[_0x4f8e[4]]===123||(e[_0x4f8e[5]]&&e[_0x4f8e[6]]&&e[_0x4f8e[4]]===73)){
+      e[_0x4f8e[2]]();
+    }
+  });
+  const c=setInterval(function(){
+    const t=160;
+    if(window[_0x4f8e[7]]-window[_0x4f8e[8]]>t||window[_0x4f8e[9]]-window[_0x4f8e[10]]>t){
+      document[_0x4f8e[11]][_0x4f8e[12]]=`<div style="${_0x4f8e[13]}">${_0x4f8e[14]}</div>`;
+      clearInterval(c);
+    }
+  },1000);
 
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            const statusEl = document.getElementById('status');
-            const preEl = document.getElementById('jsonData');
-            const url = 'https://cric.hypetg.fun/jiotv.json';
+  const p=document[_0x4f8e[16]](_0x4f8e[17]);
+  function s(){p[_0x4f8e[18]][_0x4f8e[19]]=_0x4f8e[20]}
+  function h(){p[_0x4f8e[18]][_0x4f8e[19]]=_0x4f8e[21]}
+  p[_0x4f8e[0]](_0x4f8e[22],function(e){if(e[_0x4f8e[23]]===p){h()}});
+  function u(){
+    const l=window[_0x4f8e[24]].href;
+    const el=encodeURIComponent(l);
+    const st=encodeURIComponent(_0x4f8e[28]);
+    document[_0x4f8e[16]](_0x4f8e[25])[_0x4f8e[26]]=`https://api.whatsapp.com/send?text=${st}%20${el}`;
+    document[_0x4f8e[16]](_0x4f8e[27])[_0x4f8e[26]]=`https://t.me/share/url?url=${el}&text=${st}`;
+  }
 
-            try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const data = await response.json();
-                preEl.textContent = JSON.stringify(data, null, 2);
-                statusEl.textContent = 'Successfully fetched channel data:';
-                statusEl.classList.remove('text-yellow-400');
-                statusEl.classList.add('text-green-400');
-            } catch (error) {
-                console.error('Fetch error:', error);
-                preEl.textContent = `Failed to fetch data.\nError: ${error.message}\n\nThis could be due to a network issue, a CORS policy on the server, or the file may no longer exist at that URL.`;
-                statusEl.textContent = 'Error fetching data:';
-                statusEl.classList.remove('text-yellow-400');
-                statusEl.classList.add('text-red-400');
-            }
-        });
-    </script>
-</body>
-</html>
+  let player,ui;
+  async function init(){
+    const v=document.getElementById("video");
+    ui=v.ui;
+    const c=ui.getControls();
+    player=c.getPlayer();
+    window.player=player;
+    ui[_0x4f8e[33]]({
+      controlPanelElements:[_0x4f8e[34],_0x4f8e[35],_0x4f8e[36],_0x4f8e[37],_0x4f8e[38],_0x4f8e[39],_0x4f8e[40],_0x4f8e[41]],
+      volumeBarColors:{base:"rgba(255, 0, 150, 0.7)",level:"rgba(0, 204, 255, 0.7)"},
+      seekBarColors:{base:"rgba(0, 204, 255, 0.7)",buffered:"rgba(255, 0, 150, 0.7)",played:"rgba(0, 204, 255, 0.7)"}
+    });
+    player.addEventListener("error",onPlayerErrorEvent);
+    c.addEventListener("error",onUIErrorEvent);
+    const m='https://ottb.live.cf.ww.aiv-cdn.net/lhr-nitro/live/dash/enc/bsaaetko8v/out/v1/bd3b0c314fff4bb1ab4693358f3cd2d3/cenc.mpd';
+    const kid='d0f2e5c39e70c18f29bf77768a1ad89a';
+    const key='d6853c51fcf37a18905f0609972395d7';
+    player.configure({drm:{clearKeys:{[kid]:key}}});
+    try{
+      await player.load(m);
+      console.log("✅ Live stream loaded successfully!");
+    }catch(e){onPlayerError(e);}
+    const adSrc='AdJointelegram.mp4';
+    const adO=document.getElementById('ad-overlay');
+    const adV=document.getElementById('ad-video');
+    const adB=document.getElementById('ad-telegram-button');
+    const mainV=player.getMediaElement();
+    const mainC=ui.getControls().getControlsContainer();
+    function playAd(){
+      console.log("🎬 Pausing stream and starting local ad...");
+      mainV.pause();
+      mainC.style.display='none';
+      adO.style.display='flex';
+      adB.style.display='block';
+      adV.src=adSrc;
+      adV.play().catch(e=>{
+        console.error("Ad playback failed:",e);
+        resumeMain();
+      });
+    }
+    function resumeMain(){
+      console.log("✅ Ad finished. Resuming live stream.");
+      adO.style.display='none';
+      adB.style.display='none';
+      mainC.style.display='';
+      mainV.play();
+    }
+    adV.addEventListener('ended',resumeMain);
+    adV.addEventListener('error',e=>{
+      console.error("Error loading or playing ad video.",e);
+      resumeMain();
+    });
+    const interval=5*60*1000;
+    setInterval(playAd,interval);
+    u();
+    setTimeout(s,1500);
+  }
+  function onPlayerErrorEvent(e){onPlayerError(e.detail);}
+  function onPlayerError(e){console.error("🚫 Shaka Player Error",e);}
+  function onUIErrorEvent(e){onPlayerError(e.detail);}
+  document.addEventListener(_0x4f8e[50],init);
+})();
+ </script>
